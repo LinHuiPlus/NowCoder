@@ -7,15 +7,18 @@ import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.util.MailClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -26,30 +29,11 @@ public class MapperTest {
     private UserMapper userMapper;
     @Autowired
     private DiscussPostMapper discussPostMapper;
+    @Autowired
+    private MailClient mailClient;
+    @Autowired
+    private TemplateEngine templateEngine;
 
-    @Test
-    public void testSelectUser(){
-        User user = userMapper.selectById(101);
-        System.out.println(user);
-        User user1 = userMapper.selectByName("liubei");
-        System.out.println(user1);
-    }
 
-    @Test
-    public void testSelectDiscussPosts(){
-        List<DiscussPost> discussPosts = discussPostMapper.selectDiscussPosts(0,0,10);
-        discussPosts.forEach(System.out::println);
-        System.out.println(discussPostMapper.selectDiscussPostRows(0));
-    }
-
-    @Test
-    public void test(){
-        Scanner sc = new Scanner(System.in);
-        String s = sc.next();
-        String[] s1 = s.split(" ");
-        for (int i = 0; i < s1.length; i++) {
-            System.out.println(s1[i]);
-        }
-    }
-
+    
 }

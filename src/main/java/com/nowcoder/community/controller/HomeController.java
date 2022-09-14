@@ -28,10 +28,10 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/nowcoder", method = RequestMethod.GET)
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String responseFirst(Model model, Page page){
         page.setRows(discussPostService.findDiscussPostRows(0));
-        page.setPath("/nowcoder");
+        page.setPath("/index");
 
         List<DiscussPost> list = discussPostService.findDiscussPosts(0, page.getOffset(), page.getPageLimit());
         List<Map<String, Object>> discussPosts = new ArrayList<>();

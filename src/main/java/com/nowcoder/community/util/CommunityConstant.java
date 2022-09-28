@@ -18,4 +18,14 @@ public interface CommunityConstant {
      * 激活失败
      */
     int ACTIVATION_FAILURE = 2;
+
+    /**
+     * 默认超时时长
+     */
+    int DEFAULT_EXPIRED_SECONDS = 1000 * 6;
+
+    /**
+     *
+     */
+    int REMEMBER_EXPIRED_SECONDS = 1000 * 6 * 21;
 }

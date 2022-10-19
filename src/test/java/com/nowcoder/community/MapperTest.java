@@ -9,7 +9,9 @@ import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.MailClient;
+import com.nowcoder.community.util.SensitiveFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +61,19 @@ public class MapperTest {
         loginTicketMapper.updateStatus("abc", 0);
     }
 
+    @Test
+    public void testJson() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "zhanglinhui");
+        System.out.println(CommunityUtil.getJsonString(123, "nihao", map));
+    }
+
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
+    @Test
+    public void testSensitive() {
+        //String test = "这里可以赌博嫖娼啊，也可以嫖娼，同事也是个傻逼。";
+        //System.out.println(sensitiveFilter.filter(test));
+    }
     
 }

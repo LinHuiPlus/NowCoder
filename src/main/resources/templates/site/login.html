@@ -70,6 +70,7 @@
 							<input type="text" th:class="|form-control ${usernameMsg!=null?'is-invalid':''}|"
 								   th:value="${param.username}"
 								   id="username" name="username" placeholder="请输入您的账号!" required>
+							<
 							<div class="invalid-feedback" th:text="${usernameMsg}">
 								该账号不存在!
 							</div>
@@ -187,7 +188,7 @@
 	<script>
 		function refresh_kapthca() {
 			var path = CONTEXT_PATH + "/kaptcha?p=" +Math.random(); //有些浏览器比较智能，如果后面不加随机数，那么刷新后的路径和刷新前的路径是一样的，它就偷懒不会变，这里加参数就是欺骗浏览器
-			$("#kaptcha").attr("src", path);
+			$("#kaptcha").attr("src", path);   //kaptcha是id，src是属性，path属性值赋值给src
 		}
 	</script>
 </body>

@@ -30,6 +30,8 @@ public class HomeController {
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String responseFirst(Model model, Page page){
+        // 方法调用前，SpringMVC会自动实例化model和page，并将page注入到model
+        // 所以在thymeleaf中可以直接访问page中的数据
         page.setRows(discussPostService.findDiscussPostRows(0));
         page.setPath("/index");
 

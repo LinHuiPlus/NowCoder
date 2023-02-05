@@ -23,7 +23,7 @@ public class SensitiveFilter {
 
     private static final String REPLACEMENT = "***";
 
-    private Trie trie =  new Trie();
+    private TrieNode rootNode =  new TrieNode();
     @PostConstruct
     public void init() {
         try (
@@ -39,7 +39,8 @@ public class SensitiveFilter {
         }
     }
 
-    private class TrieNode{
+    private class TrieNode {
+
         private boolean isEnd = false;
         private Map<Character, TrieNode> subNodes;
         public TrieNode() {
@@ -51,16 +52,9 @@ public class SensitiveFilter {
         private boolean isKeywordEnd() {
             return isEnd;
         }
-    }
-
-    private class Trie {
-        TrieNode root;
-        public Trie() {
-            root = new TrieNode();
-        }
 
         public void insert(String word) {
-            TrieNode node = root;
+            TrieNode node = rootNode;
             for (int i = 0; i < word.length(); i++) {
                 if(node.subNodes.get(word.charAt(i)) == null) {
                     node.subNodes.put(word.charAt(i), new TrieNode());
@@ -70,8 +64,9 @@ public class SensitiveFilter {
             node.isEnd = true;
         }
         public boolean search(String word) {
-            TrieNode node = root;
+            TrieNode node = rootNode;
             for (int i = 0; i < word.length(); i++) {
+
                 if(node.subNodes.get(word.charAt(i)) == null) {
                     return false;
                 }
@@ -82,7 +77,7 @@ public class SensitiveFilter {
     }
 
     private void addKeyword(String keyword) {
-        trie.insert(keyword);
+        rootNode.insert(keyword);
     }
 
     public String filter(String text) {
@@ -91,20 +86,42 @@ public class SensitiveFilter {
         }
 
         StringBuilder res = new StringBuilder();
-        for (int i = 0; i < text.length(); i++) {
-            int p = -1;
-            int t = i;
-            for (int j = i+1; j < text.length(); j++) {
-                if(trie.search(text.substring(t,j))) {
-                    res.append(REPLACEMENT);
-                    i = j-1;
-                    p = j;
+        int begin = 0;
+        int position = 0;
+        TrieNode tempNode = rootNode;
+        while (position < text.length()) {
+            char c = text.charAt(position);
+
+            if (isSymbol(c)) {
+                if (tempNode == rootNode) {
+                    res.append(c);
+                    begin++;
                 }
+                position++;
+                continue;
             }
-            if(p == -1) {
-                res.append(text.charAt(i));
+
+            tempNode = tempNode.subNodes.get(c);
+            if (tempNode == null) {
+                // 以begin开头的字符串不是敏感词
+                res.append(text.charAt(begin));
+                // 进入下一个位置
+                position = ++begin;
+                // 重新指向根节点
+                tempNode = rootNode;
+            } else if (tempNode.isKeywordEnd()) {
+                // 发现敏感词,将begin~position字符串替换掉
+                res.append(REPLACEMENT);
+                // 进入下一个位置
+                begin = ++position;
+                // 重新指向根节点
+                tempNode = rootNode;
+            } else {
+                // 检查下一个字符
+                position++;
             }
         }
+        res.append(text.substring(begin));
         return res.toString();
     }
 

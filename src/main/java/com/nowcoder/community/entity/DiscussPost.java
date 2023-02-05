@@ -11,10 +11,10 @@ public class DiscussPost {
     private int userId;
     private String title;
     private String content;
-    private int type;
-    private int status;
+    private int type; //0 普通 1 置顶
+    private int status; //0 正常  1 精华  2 拉黑
     private Date createTime;
-    private int commentCount;
+    private int commentCount;  //帖子评论的数量
     private double score;
 
     @Override
@@ -30,6 +30,19 @@ public class DiscussPost {
                 ", commentCount=" + commentCount +
                 ", score=" + score +
                 '}';
+    }
+
+    public DiscussPost(){};
+
+    public DiscussPost(int userId, String title, String content, int type, int status, Date createTime, int commentCount, int score) {
+        this.setUserId(userId);
+        this.setTitle(title);
+        this.setContent(content);
+        this.setType(type);
+        this.setStatus(status);
+        this.setCreateTime(createTime);
+        this.setCommentCount(commentCount);
+        this.setScore(score);
     }
 
     public int getId() {

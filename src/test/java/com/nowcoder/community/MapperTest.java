@@ -6,9 +6,11 @@ package com.nowcoder.community;/*
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.Comment;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.MailClient;
 import com.nowcoder.community.util.SensitiveFilter;
@@ -41,6 +43,8 @@ public class MapperTest {
     @Autowired
     private LoginTicketMapper loginTicketMapper;
 
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
     @Test
     public void testInsertTicket() {
         LoginTicket loginTicket = new LoginTicket();
@@ -68,12 +72,40 @@ public class MapperTest {
         System.out.println(CommunityUtil.getJsonString(123, "nihao", map));
     }
 
-    @Autowired
-    private SensitiveFilter sensitiveFilter;
     @Test
     public void testSensitive() {
-        //String test = "这里可以赌博嫖娼啊，也可以嫖娼，同事也是个傻逼。";
-        //System.out.println(sensitiveFilter.filter(test));
+        String test = "这里可以赌博嫖娼啊，也可以嫖娼，同事也是个傻逼。";
+        System.out.println(sensitiveFilter.filter(test));
+        test = "这里可以赌*博@嫖#娼啊，也可以嫖¥¥娼，同事也是个@傻#¥逼。";
+        System.out.println(sensitiveFilter.filter(test));
+        test = "你是个&二&&百%%五啊。";
+        System.out.println(sensitiveFilter.filter(test));
     }
-    
+
+    @Test
+    public void testInsert() {
+        DiscussPost post = new DiscussPost();
+        post.setTitle("你是个&二&&百%%五啊。");
+        post.setContent("这里可以赌*博@嫖#娼啊，也可以嫖¥¥娼，");
+        post.setType(1);
+        post.setStatus(1);
+        post.setCreateTime(new Date());
+        post.setCommentCount(1);
+        post.setScore(1);
+        discussPostMapper.insertDiscussPost(post);
+    }
+
+    @Test
+    public void testFindPost() {
+        System.out.println(discussPostMapper.selectDiscussPostById(283));
+    }
+
+    @Autowired
+    public CommentService commentService;
+
+    @Test
+    public void testComment() {
+        List<Comment> list = commentService.getCommentsByEntityId(1, 228, 0, 5);
+        list.forEach(System.out::println);
+    }
 }

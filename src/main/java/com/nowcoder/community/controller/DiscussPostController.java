@@ -9,6 +9,7 @@ import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
@@ -37,6 +38,9 @@ public class DiscussPostController implements CommunityConstant {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeService likeService;
 
     @RequestMapping(path="/add", method = RequestMethod.POST)
     @ResponseBody
@@ -85,15 +89,38 @@ public class DiscussPostController implements CommunityConstant {
                         // 该回复是不是指定目标回复
                         User target = subcomment.getTargetId() == 0 ? null : userService.getUserById(subcomment.getTargetId());
                         replyMap.put("target", target);
+
+                        long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, subcomment.getId());
+                        int likeStatus = 0;
+                        if (hostHolder.getUser() != null)
+                            likeStatus = likeService.findEntityStatusByUserId(hostHolder.getUser().getId(), ENTITY_TYPE_COMMENT, subcomment.getId());
+                        replyMap.put("likeCount", likeCount);
+                        replyMap.put("likeStatus", likeStatus);
+
                         replyList.add(replyMap);
                     }
                 }
 
                 commentMap.put("replys", replyList);
                 commentMap.put("replyCount", commentService.getCommentsCount(ENTITY_TYPE_COMMENT, comment.getId()));
+
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
+                int likeStatus = 0;
+                if (hostHolder.getUser() != null)
+                    likeStatus = likeService.findEntityStatusByUserId(hostHolder.getUser().getId(), ENTITY_TYPE_COMMENT, comment.getId());
+                commentMap.put("likeCount", likeCount);
+                commentMap.put("likeStatus", likeStatus);
+
                 commentObjectList.add(commentMap);
             }
         }
+        long postCount = likeService.findEntityLikeCount(ENTITY_TYPE_DISCUSS, discussPostId);
+        int likeStatus = 0;
+        if (hostHolder.getUser() != null)
+            likeStatus = likeService.findEntityStatusByUserId(hostHolder.getUser().getId(), ENTITY_TYPE_DISCUSS, discussPostId);
+
+        model.addAttribute("likeCount", postCount);
+        model.addAttribute("likeStatus", likeStatus);
 
         model.addAttribute("comments", commentObjectList);
         return "/site/discuss-detail";

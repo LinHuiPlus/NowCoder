@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
@@ -107,5 +108,91 @@ public class MapperTest {
     public void testComment() {
         List<Comment> list = commentService.getCommentsByEntityId(1, 228, 0, 5);
         list.forEach(System.out::println);
+    }
+
+    @Autowired
+    public RedisTemplate redisTemplate;
+    @Test
+    public void testreids() {
+        String redisKey = "test:user";
+        redisTemplate.opsForValue().set(redisKey, 2);
+        System.out.println(redisTemplate.opsForValue().get(redisKey));
+        redisTemplate.opsForValue().increment(redisKey);
+        System.out.println(redisTemplate.opsForValue().get(redisKey));
+    }
+
+
+
+    @Test
+    public void test1() {
+        List<node> list = new ArrayList<>();
+        list.add(new node(1,2, 1));
+        list.add(new node(1,2, 0));
+        //list.add(new node());
+        //list.add(null);
+        Collections.sort(list, new Comparator<node>() {
+            @Override
+            public int compare(node o1, node o2) {
+                if(o1.x < o2.x) {
+                    return 1;
+                } else if(o1.y < o2.y) {
+                    return -1;
+                } else{
+                    return 0;
+                }
+
+            }
+        });
+        for (node n : list) {
+            if(n == null) {
+                System.out.println("aa");
+                continue;
+            }
+            System.out.println(n.x +"," +n.y + "," +n.z);
+        }
+    }
+
+    class node{
+        //long num;
+        int begin, end;
+        public node(int begin, int end) {
+            this.begin = begin;
+            this.end = end;
+            //this.num = num;
+        }
+    }
+    public int[][] substringXorQueries(String s, int[][] queries) {
+        Map<Long, node> map = new HashMap<>();
+        //Set<Long> set2 = new HashSet<>();
+        int len = s.length();
+        for (int i = 1; i <= 30; i++) {
+            for (int j = 0; j < len-i; j++) {
+                String sub = s.substring(j, j+i);
+                Long num = 0L;
+                int p = 0;
+                for (int k = sub.length()-1; k >= 0; k--,p++) {
+                    if(sub.charAt(k) == '1')
+                        num += (long)Math.pow(2, p);
+                    //p++;
+                }
+
+                System.out.println(num);
+                if(map.get(num) != null) {
+                    continue;
+                }
+                map.put(num, new node(j, j+i-1));
+            }
+        }
+        int[][] ans = new int[queries.length][2];
+        for (int i = 0; i < queries.length; i++) {
+            node n = map.get(queries[i][0]^queries[i][1]);
+            System.out.println(queries[i][0]^queries[i][1]);
+            if(n != null) {
+                ans[i] = new int[]{n.begin, n.end};
+            } else {
+                ans[i] = new int[]{-1, -1};
+            }
+        }
+        return ans;
     }
 }

@@ -85,7 +85,7 @@ public class DiscussPostController implements CommunityConstant {
                     for (Comment subcomment : comments) {
                         Map<Object, Object> replyMap = new HashMap<>();
                         replyMap.put("user", userService.getUserById(subcomment.getUserId()));
-                        replyMap.put("comment", subcomment);
+                        replyMap.put("reply", subcomment);
                         // 该回复是不是指定目标回复
                         User target = subcomment.getTargetId() == 0 ? null : userService.getUserById(subcomment.getTargetId());
                         replyMap.put("target", target);

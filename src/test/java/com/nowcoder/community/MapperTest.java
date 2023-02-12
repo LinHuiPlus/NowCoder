@@ -123,34 +123,6 @@ public class MapperTest {
 
 
 
-    @Test
-    public void test1() {
-        List<node> list = new ArrayList<>();
-        list.add(new node(1,2, 1));
-        list.add(new node(1,2, 0));
-        //list.add(new node());
-        //list.add(null);
-        Collections.sort(list, new Comparator<node>() {
-            @Override
-            public int compare(node o1, node o2) {
-                if(o1.x < o2.x) {
-                    return 1;
-                } else if(o1.y < o2.y) {
-                    return -1;
-                } else{
-                    return 0;
-                }
-
-            }
-        });
-        for (node n : list) {
-            if(n == null) {
-                System.out.println("aa");
-                continue;
-            }
-            System.out.println(n.x +"," +n.y + "," +n.z);
-        }
-    }
 
     class node{
         //long num;

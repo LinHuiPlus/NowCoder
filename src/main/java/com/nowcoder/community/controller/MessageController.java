@@ -36,6 +36,7 @@ public class MessageController implements CommunityConstant {
     // 私信列表
     @RequestMapping(path = "/letter/list", method = RequestMethod.GET)
     public String getLetterList(Model model, Page page) {
+
         User user = hostHolder.getUser();
         // 分页信息
         page.setPageLimit(PAGE_LIMIT_COUNT);
@@ -128,6 +129,7 @@ public class MessageController implements CommunityConstant {
     @RequestMapping(path = "/letter/send", method = RequestMethod.POST)
     @ResponseBody
     public String sendLetter(String toName, String content) {
+
         User target = userService.getUserByName(toName);
         if (target == null) {
             return CommunityUtil.getJsonString(1, "发送失败!");

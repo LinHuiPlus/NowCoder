@@ -16,4 +16,5 @@ public interface CommentMapper {
     public int findCommentCount(int entityType, int entityId);
     // 添加评论
     public int addComment(Comment comment);
+    Comment selectCommentById(int id);
 }

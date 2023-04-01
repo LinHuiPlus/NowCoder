@@ -14,18 +14,40 @@ import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.MailClient;
 import com.nowcoder.community.util.SensitiveFilter;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.KafkaHandler;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
+@Component
+class KafkaProducer{
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
+    public void sendMessage(String topic, String content) {
+        kafkaTemplate.send(topic, content);
+    }
+}
+
+@Component
+class KafkaConsumer{
+    @KafkaListener(topics = {"test", "my-topic"})
+    public void handleMessage(ConsumerRecord record) {
+        System.out.println(record.value());
+    }
+}
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,6 +68,26 @@ public class MapperTest {
 
     @Autowired
     private SensitiveFilter sensitiveFilter;
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
+    @Test
+    public void test() {
+
+    }
+    @Test
+    public void testKafka() {
+        kafkaProducer.sendMessage("test", "你好");
+        kafkaProducer.sendMessage("my-topic", "nihao");
+        kafkaProducer.sendMessage("test", "你好");
+        try{
+            Thread.sleep(1000*5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void testInsertTicket() {
         LoginTicket loginTicket = new LoginTicket();
